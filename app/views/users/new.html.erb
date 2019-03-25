@@ -1,3 +1,10 @@
+<% errors = flash[:errors] %>
+<% if errors %>
+  <% errors.each do |err| %>
+    <h1 class="error"><%= err %></h1>
+  <% end %>
+<% end %>
+
 <%= form_for @user do |f| %>
 
   <%= f.label :name %><br>
