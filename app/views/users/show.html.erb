@@ -1,2 +1,7 @@
+
+<% if flash[:success] %>
+  <h1 class="alert-success" ><%= flash[:success] %></h1>
+<% end %>
+
 <h1><%= @user.name %></h1>
 <p><%= @user.nickname %></p>
