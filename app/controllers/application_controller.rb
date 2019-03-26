@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   def correct_user
     @user = User.find(params[:id])
     unless current_user?(@user)
-      flash[:danger] = "You cannot edit another user's profile."
+      flash[:danger] = "You cannot perform this action."
       redirect_to(root_url)
     end
   end
