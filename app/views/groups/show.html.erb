@@ -13,8 +13,22 @@
   <button type="submit" class="btn btn-default">Send</button>
 <% end %>
 
-<div class="container-fluid">
+<div class="container-fluid message-box">
   <% @group.messages.reverse.each do |m| %>
-    <p><%= m.content %> ||| SENT BY: <%= m.user.nickname %> </p>
-  <% end %>
+      <% if m.user.id == current_user.id  %>
+        <div class="message-right">
+          <p class="user-name">
+            <%= m.user.nickname %>
+          </p>
+          <p><%= m.content %></p>
+        </div>
+      <% else %>
+        <div class="message-left">
+          <p class="user-name">
+            <%= m.user.nickname %>
+          </p>
+          <p><%= m.content %></p>
+        </div>
+      <% end %>
+   <% end %>
 </div>
