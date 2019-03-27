@@ -1,6 +1,6 @@
 class GroupsController < ApplicationController
   before_action :correct_user, :users, only: [:new]
-  
+  before_action :get_group, only: [:show, :edit, :update]
 
   def new
     @group = Group.new
@@ -15,15 +15,26 @@ class GroupsController < ApplicationController
 
   def show
     if has_access_to_group?
-      @group = Group.find(params[:id])      
     else
       flash[:warning] = "You don't have access to the group."
       redirect_to user_path(current_user)
     end
   end
+
+  def edit
+    @users = User.all
+  end
+
+  def update
+    byebug
+  end
   
   private
-  
+
+  def get_group
+    @group = Group.find(params[:id])
+  end
+
   def group_params
     owner_id = current_user.id
     params[:group][:owner_id] = current_user.id.to_s

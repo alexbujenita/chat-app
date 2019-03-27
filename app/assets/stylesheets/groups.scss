@@ -6,6 +6,22 @@ p {
   margin-bottom: 2px;
 }
 
+.container-messages {
+  margin-top: 25px;
+  display: flex;
+  width: 100%;
+}
+
+.sidebar {
+  padding: 1em;
+  width: 20%;
+  margin-right: 5px;
+}
+
+.send-group {
+  width: 75%;
+}
+
 .message-box {
   border: 1px solid black;
   border-radius: 5px;

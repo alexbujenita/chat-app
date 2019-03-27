@@ -1,13 +1,13 @@
+<div class="users-list">
+  <ul>
+    <% @users.each do |user| %>
 
-<ul>
-<% @users.each do |user| %>
-
-  <li>
-    <%= user.nickname %>
-  </li>
-  <% if current_user.admin? && !current_user?(user) %>
-    | <%= link_to "delete", user, method: :delete, data: { confirm: "You sure?" } %>
-  <% end %>
-
-<% end %>
-</ul>
+      <li>
+        <%= user.nickname %>
+         <% if current_user.admin? && !current_user?(user) %>
+        | <%= link_to "delete", user, method: :delete, data: { confirm: "You sure?" } %>
+      <% end %>
+      </li>
+    <% end %>
+  </ul>
+</div>

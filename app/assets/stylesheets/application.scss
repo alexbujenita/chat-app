@@ -15,3 +15,40 @@
  */
  @import "bootstrap-sprockets";
  @import "bootstrap";
+
+ .container-nav-bar{
+  display: inline-flex;
+  height: 50px;
+ }
+ 
+ .nav-bar-list {
+  display: flex;
+ }
+
+ .logo-image {
+  width: 70px;
+  display: block;
+ }
+
+ .nav-bar-menu {
+  display: inline-block;
+ }
+
+ .page-content {
+   padding-top: 70px;
+   display: flex;
+   flex-direction: column;
+    justify-content: center;
+   align-items: center;
+   vertical-align: middle;
+   height: 94vh;
+ }
+
+ .home-page {
+  display: flex;
+  flex-direction: column;
+  height: 88vh;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+ }
