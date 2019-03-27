@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params(:name, :nickname, :age, :email, :password, :password_confirmation))
     if @user.save
-      Group.find(11).update(user_ids: @user.id) # HARDCODED, CHANGE IF DB RESET
+      Member.create(group_id:11, user_id:@user.id) # HARDCODED, CHANGE IF DB RESET
       log_in @user
       redirect_to user_path(@user)
     else
