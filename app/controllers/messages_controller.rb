@@ -9,6 +9,10 @@ class MessagesController < ApplicationController
     end
   end
 
+  def new_messages
+    render json: Message.all
+  end
+
   private
 
   def message_params
