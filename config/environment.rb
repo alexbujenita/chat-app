@@ -3,3 +3,7 @@ require_relative 'application'
 
 # Initialize the Rails application.
 Rails.application.initialize!
+
+Rails.application.configure do 
+  config.action_cable.url = "ws://localhost:3000/cable"
+end 
