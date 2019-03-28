@@ -5,6 +5,11 @@
 <div class="container-messages">
 
   <div class="sidebar">
+    <% if flash[:success] %>
+      <div class="alert alert-success" role="alert">
+        <%= flash[:success] %>
+      </div>
+    <% end %>
     <h4> <%= @group.name %> </h4>
     <ul class="nav flex-column">
       <% @group.users.each do |u| %>
@@ -24,7 +29,7 @@
       <button type="submit" class="btn btn-default">Send</button>
     <% end %>
 
-    <div class="container-fluid message-box">
+    <div class="container-fluid message-box" id="real-time">
       <% @group.messages.reverse.each do |m| %>
           <% if m.user.id == current_user.id  %>
             <div class="message-right">

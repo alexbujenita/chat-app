@@ -8,7 +8,7 @@
     <ul>
       <%= f.collection_check_boxes :user_ids, @users, :id, :name do |b| %>
         <li>
-          <%= b.label %>
+          <%= b.label  %>
           <%= b.check_box %>
         </li>
       <% end %>
