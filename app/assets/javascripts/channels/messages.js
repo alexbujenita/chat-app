@@ -1,25 +1,19 @@
 App.messages = App.cable.subscriptions.create('MessagesChannel', {  
   received: function(data) {
-    // $("#message-box").removeClass('hidden')
-    console.log("RETURN OF RENDERMESSAGE", this.renderMessage(data))
-    let messagediv = this.renderMessage(data)
-    console.log(messagediv)
+    const messagediv = this.renderMessage(data);
+    // const notification = new Audio('http://onj3.andrelouis.com/phonetones/unzipped/Huawei/Huawei%20Ascend%20P6/notifications/Hand_Drum.ogg');
+    // notification.play();
     return $('.message-box').prepend(messagediv);
   },
 
   renderMessage: function(data) {
     const userName = document.querySelector('#username').innerText;
-
-    console.log(userName, data);
     
     const messageDiv = document.createElement('div');
     
     if (userName === data.user) {
       messageDiv.classList.add('message-right');
     } else {
-      console.log("USERNAME", userName)
-      console.log("DATAUSER", data.user)
-
       messageDiv.classList.add('message-left');
     }
     

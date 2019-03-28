@@ -36,8 +36,6 @@
  }
 
  .page-content {
-  //  background-image: url(asset_path('red-splash.jpg'));
-  //  background-size: 100%;
    padding-top: 70px;
    display: flex;
    flex-direction: column;
@@ -46,9 +44,15 @@
    vertical-align: middle;
    height: 94vh;
   }
+  
+  .home-page-container {
+    width: 100%;
+    background-image: url(asset_path('red-splash.jpg'));
+    background-size: 100%;
+  }
 
- .home-page {
-  // color: papayawhip;
+  .home-page {
+  color: papayawhip;
   font-family: 'Germania One', cursive;
   text-shadow: 2px 2px 20px #CE0000;;
   display: flex;
