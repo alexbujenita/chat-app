@@ -15,6 +15,7 @@
  */
  @import "bootstrap-sprockets";
  @import "bootstrap";
+ @import url('https://fonts.googleapis.com/css?family=Germania+One');
 
  .container-nav-bar{
   display: inline-flex;
@@ -35,16 +36,21 @@
  }
 
  .page-content {
+  //  background-image: url(asset_path('red-splash.jpg'));
+  //  background-size: 100%;
    padding-top: 70px;
    display: flex;
    flex-direction: column;
-    justify-content: center;
+   justify-content: center;
    align-items: center;
    vertical-align: middle;
    height: 94vh;
- }
+  }
 
  .home-page {
+  // color: papayawhip;
+  font-family: 'Germania One', cursive;
+  text-shadow: 2px 2px 20px #CE0000;;
   display: flex;
   flex-direction: column;
   height: 88vh;
