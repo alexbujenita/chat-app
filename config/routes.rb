@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   post   '/login',   to: 'sessions#create'
   delete '/logout',  to: 'sessions#destroy'
   get    '/signup',  to: 'users#new'
+  get    '/about',   to: 'home#about'
   post 'messages/create', to: 'messages#create', as: 'create_message'
   resources :groups
   resources :members
