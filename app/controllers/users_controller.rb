@@ -2,7 +2,7 @@ class UsersController < ApplicationController
 
   before_action :get_user,         only: [:show, :edit, :update]
   before_action :logged_in_user,   only: [:edit, :update, :show, :index, :destroy]
-  before_action :correct_user,     only: [:edit, :update]
+  before_action :correct_user,     only: [:edit, :update, :show]
   before_action :admin_user,       only: :destroy
 
   def index
@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params(:name, :nickname, :age, :email, :password, :password_confirmation))
     if @user.save
-      Member.create(group_id:11, user_id:@user.id) # HARDCODED, CHANGE IF DB RESET
+      Member.create(group_id:1, user_id:@user.id) # HARDCODED, CHANGE IF DB RESET
       log_in @user
       redirect_to user_path(@user)
     else
