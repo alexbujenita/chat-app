@@ -4,7 +4,8 @@ class MessagesController < ApplicationController
     if @message.save
       ActionCable.server.broadcast 'messages',
         message: @message.content,
-        user: @message.user.nickname
+        user: @message.user.nickname,
+        groupName: @message.group.name
       redirect_to group_path(id: params[:message][:group_id])
     else
       flash[:mess_error] = "There was an error sending the message. Try again"
