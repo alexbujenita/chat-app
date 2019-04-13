@@ -30,5 +30,10 @@ I tried building an app with many features such as:
 
 ![](demo.gif)
 
+The GIF below demonstrates how is possible to create a group and also how to edit it.
+
+
+![](editgroup.gif)
+
 
 
