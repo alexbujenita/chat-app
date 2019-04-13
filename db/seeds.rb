@@ -6,11 +6,8 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-# 10.times do |n|
-#   name = Faker::Name.name
-#   nick = Faker::Ancient.hero
-#   age = Faker::Number.between(13, 70)
-#   email = "testing-#{n + 1}@shutapp.com"
-#   password = 'pass'
-#   User.create!(name: name, nickname: nick, age: age, email: email, password: password, password_confirmation: password)
+User.create!(name: 'Admin', nickname: 'admin', age: 30, email: 'admin@shutapp.com', password: 'password', password_confirmation: 'password', admin: true)
+Group.create!(name: "ShutApp Community", owner_id: 1)
+Member.create!(user_id: 1, group_id: 1)
+
 # end
