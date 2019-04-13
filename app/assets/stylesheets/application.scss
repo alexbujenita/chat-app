@@ -34,8 +34,11 @@
  .nav-bar-menu {
   display: inline-block;
  }
-.dropdown-menu > li > a:hover {
-  color: #CE0000
+ .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
+  color: #CE0000;
+  @media (max-width: 767px) {
+    color: #CE0000;
+  }
 }
 
  .page-content {
