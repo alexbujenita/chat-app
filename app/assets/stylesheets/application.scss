@@ -1,20 +1,18 @@
-/*
- * This is a manifest file that'll be compiled into application.css, which will include all the files
- * listed below.
- *
- * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
- * vendor/assets/stylesheets directory can be referenced here using a relative path.
- *
- * You're free to add application-wide styles to this file and they'll appear at the bottom of the
- * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
- * files in this directory. Styles in this file should be added after the last require_* statement.
- * It is generally better to create a new file per style scope.
- *
- *= require_tree .
- *= require_self
- */
-@import "bootstrap-sprockets";
-@import "bootstrap";
+// Entry point compiled by dartsass-rails into app/assets/builds/application.css.
+//
+// Bootstrap 5 comes from the `bootstrap` gem: it puts
+// <gem>/bootstrap-5.3.8/assets/stylesheets on config.assets.paths, which
+// dartsass-rails passes to Dart Sass as a --load-path, so "bootstrap" resolves
+// to that directory's _bootstrap.scss.
+@use "bootstrap";
+
+// Per-controller stylesheets that Sprockets' `*= require_tree .` used to pull in.
+@use "groups";
+@use "members";
+@use "messages";
+@use "sessions";
+@use "users";
+
 @import url("https://fonts.googleapis.com/css?family=Germania+One");
 
 .container-nav-bar {
@@ -57,7 +55,7 @@
 .nav-bar-menu {
   display: inline-block;
 }
-.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
+.navbar-dark .navbar-nav .dropdown-menu .dropdown-item:hover {
   color: #ce0000;
   @media (max-width: 767px) {
     color: #ce0000;
@@ -77,14 +75,14 @@
 
 .home-page-container {
   width: 100%;
-  background-image: url(asset_path("red-splash.jpg"));
+  background-image: url("red-splash.jpg");
   background-size: 100%;
 }
 
 .about-container {
   width: 100%;
   height: 100%;
-  background-image: url(asset_path("red-splash.jpg"));
+  background-image: url("red-splash.jpg");
   background-size: 100%;
   padding: 40px;
 }

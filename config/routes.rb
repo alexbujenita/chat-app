@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
+  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  get "up" => "rails/health#show", as: :rails_health_check
 
   mount ActionCable.server => '/cable'
 
@@ -8,11 +11,11 @@ Rails.application.routes.draw do
   get    '/signup',  to: 'users#new'
   get    '/about',   to: 'home#about'
   post 'messages/create', to: 'messages#create', as: 'create_message'
+
   resources :groups
   resources :members
-  # resources :messages
+
   root 'home#index'
-  get 'new_messages', to: 'messages#new_messages'
+
   resources :users
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
