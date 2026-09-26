@@ -15,16 +15,15 @@
 <h4> <%= link_to "Create a group and start chatting!", new_group_path(id: @user.id) %></h4>
 
 <div class="dropdown">
-  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
     My Groups
-    <span class="caret"></span>
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
     <% @user.groups.each do |g| %>
       <% next if g.name.downcase.include?('shutapp') %>
-      <li> <%= link_to g.name, group_path(g) %> </li>
+      <li> <%= link_to g.name, group_path(g), class: "dropdown-item" %> </li>
     <% end %>
-    <li role="separator" class="divider"></li>
-    <li> <%= link_to "ShutApp Community", '/groups/1' %> </li>  <%#HARDCODED OPEN CHAT, CHANGE WHEN NEW DB IS CREATED!!!%>
+    <li><hr class="dropdown-divider"></li>
+    <li> <%= link_to "ShutApp Community", '/groups/1', class: "dropdown-item" %> </li>  <%#HARDCODED OPEN CHAT, CHANGE WHEN NEW DB IS CREATED!!!%>
   </ul>
 </div>

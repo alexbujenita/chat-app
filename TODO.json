@@ -1,0 +1,320 @@
+{
+  "schema_version": 1,
+  "project": "ShutApp (chat-app)",
+  "generated": "2026-09-26",
+  "context": "Follow-ups after the Rails 5.2 -> 8.1.4 / Ruby 4.0.7 port (branch major-up, uncommitted).",
+  "enums": {
+    "status": ["todo", "in_progress", "done", "wontfix"],
+    "priority": ["high", "medium", "low"],
+    "effort": ["S", "M", "L"],
+    "category": ["port-loose-end", "security", "bug", "cleanup"]
+  },
+  "items": [
+    {
+      "id": "LE-1",
+      "title": "Keep orchestration state out of git before committing the port",
+      "category": "port-loose-end",
+      "priority": "high",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": [".gitignore"],
+      "description": "The Rails 8 port is uncommitted on branch major-up. The `.omo/` directory (plans, evidence, notepads) is untracked and would be swept in by `git add -A`. Decide whether to keep the local rollback tag `pre-rails8-port`.",
+      "acceptance": [
+        ".omo/ is ignored (.gitignore or .git/info/exclude) and `git status --porcelain` shows no `?? .omo/`",
+        "Port changes committed in reviewable commits on major-up",
+        "Tag pre-rails8-port deleted or intentionally kept"
+      ],
+      "notes": "Rollback anchor until committed: git reset --hard pre-rails8-port && git clean -fd"
+    },
+    {
+      "id": "LE-2",
+      "title": "Resolve Kamal deploy config that references a missing Dockerfile",
+      "category": "port-loose-end",
+      "priority": "medium",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["config/deploy.yml", "bin/kamal", "Gemfile", ".kamal/"],
+      "description": "The Rails 8 skeleton brought config/deploy.yml, bin/kamal and the kamal gem, but the Dockerfile was intentionally not copied, so a Kamal deploy would fail.",
+      "acceptance": [
+        "Either config/deploy.yml, bin/kamal and the kamal gem are removed and `bundle install` still succeeds, OR a Dockerfile is added and `docker build .` succeeds"
+      ],
+      "notes": "thruster and bin/docker-entrypoint are part of the same decision."
+    },
+    {
+      "id": "LE-3",
+      "title": "Verify production mode (Solid Cable/Queue/Cache, asset precompile)",
+      "category": "port-loose-end",
+      "priority": "medium",
+      "effort": "M",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["config/database.yml", "config/cable.yml", "config/environments/production.rb", "db/cable_schema.rb", "db/cache_schema.rb", "db/queue_schema.rb"],
+      "description": "All verification ran in development, where Action Cable uses the async adapter. Production uses solid_cable plus separate SQLite databases for cache/queue/cable, which were never exercised.",
+      "acceptance": [
+        "`RAILS_ENV=production bin/rails db:prepare` creates primary, cache, queue and cable databases",
+        "`RAILS_ENV=production bin/rails assets:precompile` succeeds and includes the dartsass-built application.css",
+        "A production-mode server serves / with 200 and delivers an Action Cable message between two browsers via solid_cable"
+      ],
+      "notes": "Needs SECRET_KEY_BASE or config/master.key (skeleton-generated, gitignored)."
+    },
+    {
+      "id": "LE-4",
+      "title": "Make the test suite run",
+      "category": "port-loose-end",
+      "priority": "medium",
+      "effort": "M",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["test/"],
+      "description": "test/ mixes Rails 5 generated stubs/fixtures with the Rails 8 skeleton test_helper and has never been run after the port.",
+      "acceptance": [
+        "`bin/rails test` exits 0",
+        "Obsolete generated stubs/fixtures removed or fixed",
+        "At least one integration test covers login, posting a message and admin delete"
+      ],
+      "notes": "Useful before the security fixes so behaviour can be pinned first."
+    },
+    {
+      "id": "LE-5",
+      "title": "Fix local Ruby toolchain ergonomics",
+      "category": "port-loose-end",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": [],
+      "description": "The gem executable dir /usr/local/lib/ruby/gems/4.0.0/bin is not on PATH (so `rails` resolves to the macOS /usr/bin/rails stub), and every `gem` command prints \"already initialized constant RDoc::...\" warnings because rdoc 8.0.0 lives in ~/.local/share/gem/ruby/4.0.0 while the system rdoc plugin points at rdoc 7.0.4.",
+      "acceptance": [
+        "`which rails` resolves to the gem bin dir in a new shell",
+        "`gem env` prints no RDoc constant warnings"
+      ],
+      "notes": "Machine-level change outside the repo (shell rc / gem dirs)."
+    },
+    {
+      "id": "SEC-1",
+      "title": "Stop message impersonation and unauthenticated posting",
+      "category": "security",
+      "priority": "high",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": ["LE-4"],
+      "files": ["app/controllers/messages_controller.rb", "app/views/groups/show.html.erb"],
+      "description": "MessagesController#create trusts `message[user_id]` from a hidden form field, has no login check and no group-membership check, so anyone can post as any user into any group.",
+      "acceptance": [
+        "Logged-out POST /messages/create redirects to /login and creates no Message",
+        "A tampered message[user_id] is ignored; the message is attributed to current_user",
+        "Posting to a group the user is not a member of is rejected",
+        "The hidden user_id field is removed from the form"
+      ],
+      "notes": "Build via current_user.messages.build(content:, group:) and permit only :group_id, :content."
+    },
+    {
+      "id": "SEC-2",
+      "title": "Restrict group edit/update to the group owner",
+      "category": "security",
+      "priority": "high",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": ["LE-4"],
+      "files": ["app/controllers/groups_controller.rb"],
+      "description": "GroupsController#edit and #update have no ownership check, so any visitor can rename a group or change its members.",
+      "acceptance": [
+        "GET /groups/:id/edit and PATCH /groups/:id by a non-owner redirect without changes",
+        "Logged-out requests redirect to /login",
+        "The owner can still edit"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "SEC-3",
+      "title": "Scope Action Cable broadcasts per group",
+      "category": "security",
+      "priority": "medium",
+      "effort": "M",
+      "status": "todo",
+      "depends_on": ["SEC-1"],
+      "files": ["app/channels/messages_channel.rb", "app/channels/application_cable/connection.rb", "app/javascript/channels/messages_channel.js", "app/controllers/messages_controller.rb", "README.md"],
+      "description": "MessagesChannel streams from one global 'messages' stream, so every browser receives every group's messages; privacy is only client-side filtering. Identify the connection by the session user and stream per group.",
+      "acceptance": [
+        "Connection uses identified_by :current_user from the session and rejects anonymous connections",
+        "The channel subscribes per group and rejects non-members",
+        "A member of group Y receives no WebSocket frame for a message posted to group X",
+        "The README 'Known limitations' entries for the global stream and anonymous connections are removed"
+      ],
+      "notes": "Removes the need for the client-side groupName/42 sentinel filter."
+    },
+    {
+      "id": "BUG-1",
+      "title": "Logged-out GET /groups/:id raises a 500",
+      "category": "bug",
+      "priority": "high",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/controllers/groups_controller.rb"],
+      "description": "has_access_to_group? calls current_user.groups while current_user is nil.",
+      "acceptance": [
+        "Logged-out GET /groups/1 redirects to /login (302), no 500"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BUG-2",
+      "title": "Channel JS throws TypeError on pages without #groupname",
+      "category": "bug",
+      "priority": "medium",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/javascript/channels/messages_channel.js"],
+      "description": "renderMessage reads document.querySelector('#groupname').innerText with no null check, so a broadcast arriving on any non-group page throws.",
+      "acceptance": [
+        "With a browser on / and another user posting a message, the first browser's console shows no errors"
+      ],
+      "notes": "Largely obsoleted by SEC-3, but cheap to guard."
+    },
+    {
+      "id": "BUG-3",
+      "title": "Message textarea allows 300 chars but the model allows 200",
+      "category": "bug",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/views/groups/show.html.erb", "app/models/message.rb"],
+      "description": "Messages of 201-300 characters fail validation with only the generic mess_error flash.",
+      "acceptance": [
+        "The textarea maxlength matches the model's maximum length (200)"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "BUG-4",
+      "title": "Failed-login error rendered twice and mentions email",
+      "category": "bug",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/views/sessions/new.html.erb", "app/views/layouts/application.html.erb", "app/controllers/sessions_controller.rb"],
+      "description": "sessions/new renders flash.now[:danger] and the layout also renders flash[:danger]; the text says 'Invalid email/password combination' although login uses a nickname.",
+      "acceptance": [
+        "A failed login shows the error exactly once",
+        "The message reads 'Invalid nickname/password combination'"
+      ],
+      "notes": "Verify the duplication in a browser first."
+    },
+    {
+      "id": "BUG-5",
+      "title": "'User deleted' flash is never displayed",
+      "category": "bug",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/views/layouts/application.html.erb", "app/views/users/index.html.erb"],
+      "description": "UsersController#destroy sets flash[:success] but neither the layout nor users/index renders it (pre-existing, confirmed identical before the port).",
+      "acceptance": [
+        "After an admin deletes a user, /users shows 'User deleted' once"
+      ],
+      "notes": "Consider one flash partial in the layout for all keys (success, warning, danger, mess_error), replacing per-view flash blocks."
+    },
+    {
+      "id": "BUG-6",
+      "title": "Remove hardcoded group id 1 / user id 1",
+      "category": "bug",
+      "priority": "low",
+      "effort": "M",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/controllers/users_controller.rb", "app/views/users/show.html.erb", "db/seeds.rb"],
+      "description": "users#create auto-joins group_id 1, users/show links '/groups/1', and seeds hardcode owner_id/user_id 1, so everything breaks on a non-virgin database.",
+      "acceptance": [
+        "The community group is looked up by name (or a flag), not by id",
+        "`bin/rails db:seed` is idempotent and uses associations, not literal ids",
+        "The README 'Known limitations' entry for hardcoded seed ids is removed"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CL-1",
+      "title": "Remove unused image_processing gem",
+      "category": "cleanup",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["Gemfile", "Gemfile.lock"],
+      "description": "Skeleton default; the app does not use Active Storage.",
+      "acceptance": [
+        "image_processing removed, `bundle install` and `bin/rails zeitwerk:check` pass"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CL-2",
+      "title": "Remove the demo Stimulus hello_controller",
+      "category": "cleanup",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/javascript/controllers/hello_controller.js"],
+      "description": "The generator's example controller is unused.",
+      "acceptance": [
+        "The file is deleted and `bin/importmap json` no longer lists controllers/hello_controller"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CL-3",
+      "title": "Trim routes to the actions that exist",
+      "category": "cleanup",
+      "priority": "low",
+      "effort": "S",
+      "status": "todo",
+      "depends_on": ["LE-4"],
+      "files": ["config/routes.rb", "app/controllers/members_controller.rb"],
+      "description": "`resources :members` points at an empty controller and `resources :groups`/`:users` generate routes with no actions (e.g. GET /groups returns 404 ActionNotFound).",
+      "acceptance": [
+        "Resources use only: [...] matching the implemented actions",
+        "`bin/rails routes` lists no route whose action is missing",
+        "The empty MembersController is removed if unused"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "CL-4",
+      "title": "Collapsible mobile navigation",
+      "category": "cleanup",
+      "priority": "low",
+      "effort": "M",
+      "status": "todo",
+      "depends_on": [],
+      "files": ["app/views/layouts/_header.html.erb", "app/assets/stylesheets/application.scss"],
+      "description": "Below 768px the header nav stacks vertically (faithful to the old Bootstrap 3 behaviour); a Bootstrap 5 navbar-toggler/collapse would fix it.",
+      "acceptance": [
+        "At 375px width the header shows a toggler and the links open in a collapse",
+        "Desktop layout is unchanged"
+      ],
+      "notes": "Also consider data-bs-theme=\"dark\" instead of the deprecated navbar-dark."
+    },
+    {
+      "id": "CL-5",
+      "title": "Consider Rails 8 built-in authentication",
+      "category": "cleanup",
+      "priority": "low",
+      "effort": "L",
+      "status": "todo",
+      "depends_on": ["LE-4", "SEC-1", "SEC-2"],
+      "files": ["app/helpers/sessions_helper.rb", "app/controllers/sessions_controller.rb", "app/controllers/application_controller.rb"],
+      "description": "Optionally replace the hand-rolled session helpers with `bin/rails generate authentication`.",
+      "acceptance": [
+        "Login/logout/signup behaviour is preserved and covered by tests"
+      ],
+      "notes": "Optional and larger in scope; requires a data migration for existing users."
+    }
+  ]
+}
